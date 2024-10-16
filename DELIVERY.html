@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodie Express - Indian Food Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://maps.app.goo.gl/tkQAYXwfcVytPZw79"></script>
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .float { animation: float 3s ease-in-out infinite; }
+        .glow { box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        .cart-sidebar {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .cart-sidebar.open {
+            transform: translateX(0);
+        }
+        .modal {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .text-glow {
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.7), 
+                         0 0 10px rgba(255, 255, 255, 0.5), 
+                         0 0 15px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-500 via-blue-500 to-blue-700 min-h-screen">
+    <nav class="bg-white bg-opacity-90 shadow-lg fixed w-full z-10">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between">
+                <div class="flex space-x-7">
+                    <div>
+                        <a href="#" class="flex items-center py-4 px-2">
+                            <span class="font-semibold text-gray-500 text-lg">Foodie Express</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-3">
+                    <a href="#" class="py-2 px-2 font-medium text-gray-500 rounded hover:bg-orange-500 hover:text-white transition duration-300">Home</a>
+                    <a href="#menu" class="py-2 px-2 font-medium text-gray-500 rounded hover:bg-orange-500 hover:text-white transition duration-300">Menu</a>
+                    <a href="#" class="py-2 px-2 font-medium text-gray-500 rounded hover:bg-orange-500 hover:text-white transition duration-300">About</a>
+                    <a href="#" class="py-2 px-2 font-medium text-gray-500 rounded hover:bg-orange-500 hover:text-white transition duration-300">Contact</a>
+                    <button id="cartBtn" class="py-2 px-2 font-medium text-gray-500 rounded hover:bg-orange-500 hover:text-white transition duration-300">
+                        Cart (<span id="cartCount">0</span>)
+                    </button>
+                    <button id="loginBtn" class="py-2 px-2 font-medium text-gray-500 rounded hover:bg-orange-500 hover:text-white transition duration-300">Login</button>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button class="outline-none mobile-menu-button">
+                        <svg class="w-6 h-6 text-gray-500 hover:text-orange-500"
+                            fill="none" stroke-linecap="round" 
+                            stroke-linejoin="round" stroke-width="2" 
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="hidden mobile-menu">
+            <ul class="">
+                <li><a href="#" class="block text-sm px-2 py-4 hover:bg-whit-500 transition duration-300">Home</a></li>
+                <li><a href="#menu" class="block text-sm px-2 py-4 hover:bg-orange-500 transition duration-300">Menu</a></li>
+                <li><a href="#" class="block text-sm px-2 py-4 hover:bg-orange-500 transition duration-300">About</a></li>
+                <li><a href="#" class="block text-sm px-2 py-4 hover:bg-orange-500 transition duration-300">Contact</a></li>
+                <li><button id="mobileCartBtn" class="block text-sm px-2 py-4 hover:bg-orange-500 transition duration-300 w-full text-left">Cart (<span id="mobileCartCount">0</span>)</button></li>
+                <li><button id="mobileLoginBtn" class="block text-sm px-2 py-4 hover:bg-orange-500 transition duration-300 w-full text-left">Login</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="pt-24 pb-12 text-center text-white">
+        <h1 class="text-5xl font-bold mb-4">Welcome to Foodie Express</h1>
+        <p class="text-xl">Discover the rich flavors of India, delivered to your doorstep!</p>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <section id="search" class="mb-12">
+            <div class="max-w-md mx-auto">
+                <div class="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden">
+                    <div class="grid place-items-center h-full w-12 text-gray-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                    <input
+                    class="peer h-full w-full outline-none text-sm text-gray-700 pr-2"
+                    type="text"
+                    id="search"
+                    placeholder="Search for dishes.." />
+                </div>
+            </div>
+        </section>
+
+        <section id="menu" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Menu items will be dynamically inserted here -->
+        </section>
+    </main>
+
+    <div id="cartSidebar" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 cart-sidebar">
+        <div class="p-4">
+            <h2 class="text-2xl font-bold mb-4">Your Cart</h2>
+            <div id="cartItems"></div>
+            <div class="mt-4">
+                <p class="font-bold">Total: ₹<span id="cartTotal">0</span></p>
+                <button id="checkoutBtn" class="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition duration-300 w-full">
+                    Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkoutModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden modal">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Checkout</h3>
+                <div class="mt-2 px-7 py-3">
+                    <form id="checkoutForm">
+                        <input type="text" id="name" placeholder="Full Name" required class="mt-2 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1">
+                        <input type="email" id="email" placeholder="Email" required class="mt-2 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1">
+                        <input type="tel" id="phone" placeholder="Phone Number" required class="mt-2 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1">
+                        <input type="text" id="address" placeholder="Delivery Address" required class="mt-2 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1">
+                        <input type="text" id="upiId" placeholder="UPI ID (e.g., name@upi)" required class="mt-2 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1">
+                        <input type="text" id="location" placeholder="Enter your location" required class="mt-2 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1">
+                        <button type="submit" class="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition duration-300 w-full">
+                            Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden modal">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Login</h3>
+                <div class="mt-2 px-7 py-3">
+                    <form id="loginForm">
+                        <input type="email" id="loginEmail" placeholder="Email" required class="mt-2 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1">
+                        <input type="password" id="loginPassword" placeholder="Password" required class="mt-2 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1">
+                        <button type="submit" class="mt-4 bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition duration-300 w-full">
+                            Login
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap justify-between">
+                <div class="w-full md:w-1/4 mb-6 md:mb-0">
+                    <h3 class="text-lg font-semibold mb-2">Spice Express</h3>
+                    <p>Bringing the flavors of India to your doorstep.</p>
+                </div>
+                <div class="w-full md:w-1/4 mb-6 md:mb-0">
+                    <h3 class="text-lg font-semibold mb-2">Quick Links</h3>
+                    <ul>
+                        <li><a href="#" class="hover:text-orange-500">Home</a></li>
+                        <li><a href="#menu" class="hover:text-orange-500">Menu</a></li>
+                        <li><a href="#" class="hover:text-orange-500">About Us</a></li>
+                        <li><a href="#" class="hover:text-orange-500">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="w-full md:w-1/4 mb-6 md:mb-0">
+                    <h3 class="text-lg font-semibold mb-2">Contact Us</h3>
+                    <p>123 Spice Street, Flavortown</p>
+                    <p>Phone: (123) 456-7890</p>
+                    <p>Email: info@spiceexpress.com</p>
+                </div>
+                <div class="w-full md:w-1/4">
+                    <h3 class="text-lg font-semibold mb-2">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-orange-500">Facebook</a>
+                        <a href="#" class="hover:text-orange-500">Twitter</a>
+                        <a href="#" class="hover:text-orange-500">Instagram</a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 text-center">
+                <p>&copy; 2024 Spice Express. All rights  reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu items
+        const menuItems = [
+            { id: 1, name: "Butter Chicken", price: 350, image: "https://images.immediate.co.uk/production/volatile/sites/30/2021/02/butter-chicken-ac2ff98.jpg?quality=90&webp=true&resize=300,272" },
+            { id: 2, name: "Paneer Tikka", price: 300, image: "https://sharethespice.com/wp-content/uploads/2024/02/Paneer-Tikka.jpg.webp" },
+            { id: 3, name: "Chicken Biryani", price: 400, image: "https://c.ndtvimg.com/2022-04/fq5cs53_biryani-doubletree-by-hilton_625x300_12_April_22.jpg" },
+            { id: 4, name: "Masala Dosa", price: 200, image: "https://www.efghfoods.com/wp-content/uploads/2020/11/Blog-2-min.jpg" },
+            { id: 5, name: "Palak Paneer", price: 280, image: "https://www.ohmyveg.co.uk/wp-content/uploads/2021/02/Palak-Paneer-1-e1722864315381-1200x1200.jpg.webp" },
+            { id: 6, name: "Chole Bhature", price: 250, image: "https://hogr.app/blog/wp-content/uploads/2023/01/image-43.png" },
+            { id: 7, name: "Tandoori Chicken", price: 380, image: "https://onestophalal.com/cdn/shop/articles/air_fryer_chicken_tandoori-1694242200588_1200x.jpg?v=1694242335" },
+            { id: 8, name: "Malai Kofta", price: 320, image: "https://carveyourcraving.com/wp-content/uploads/2021/09/Sofyt-creamy-Malai-Kofta-recipe-1132x1536.jpg" },
+            { id: 9, name: "Aloo Gobi", price: 220, image: "https://example.com/images/aloo-gobi.jpg" },
+            { id: 10, name: "Rogan Josh", price: 400, image: "https://example.com/images/rogan-josh.jpg" },
+            { id: 11, name: "Vegetable Samosa", price: 100, image: "https://example.com/images/vegetable-samosa.jpg" },
+            { id: 12, name: "Chicken Tikka Masala", price: 380, image: "https://example.com/images/chicken-tikka-masala.jpg" },
+            { id: 13, name: "Dal Makhani", price: 250, image: "https://example.com/images/dal-makhani.jpg" },
+            { id: 14, name: "Naan Bread", price: 50, image: "https://example.com/images/naan-bread.jpg" },
+            { id: 15, name: "Vegetable Biryani", price: 350, image: "https://example.com/images/vegetable-biryani.jpg" },
+            { id: 16, name: "Chicken Korma", price: 370, image: "https://example.com/images/chicken-korma.jpg" },
+            { id: 17, name: "Matar Paneer", price: 300, image: "https://example.com/images/matar-paneer.jpg" },
+            { id: 18, name: "Lamb Vindaloo", price: 420, image: "https://example.com/images/lamb-vindaloo.jpg" },
+            { id: 19, name: "Bhindi Masala", price: 240, image: "https://example.com/images/bhindi-masala.jpg" },
+            { id: 20, name: "Raita", price: 80, image: "https://example.com/images/raita.jpg" },
+            { id: 21, name: "Gulab Jamun", price: 150, image: "https://example.com/images/gulab-jamun.jpg" },
+            { id: 22, name: "Chicken Dhansak", price: 390, image: "https://example.com/images/chicken-dhansak.jpg" },
+            { id: 23, name: "Vegetable Jalfrezi", price: 280, image: "https://example.com/images/vegetable-jalfrezi.jpg" },
+            { id: 24, name: "Keema Matar", price: 340, image: "https://example.com/images/keema-matar.jpg" },
+            { id: 25, name: "Mango Lassi", price: 120, image: "https://example.com/images/mango-lassi.jpg" }
+        ];
+
+        // Cart state
+        let cart = [];
+
+        // Function to create menu item card
+        function createMenuItemCard(item) {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 float';
+            card.innerHTML = `
+                <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h3 class="font-bold text-xl mb-2">${item.name}</h3>
+                    <p class="text-gray-700 text-base mb-4">₹${item.price}</p>
+                    <button class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition duration-300 add-to-cart" data-id="${item.id}">
+                        Add to Cart
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        // Function to render menu items
+        function renderMenuItems(items) {
+            const menuSection = document.getElementById('menu');
+            menuSection.innerHTML = '';
+            items.forEach(item => {
+                const card = createMenuItemCard(item);
+                menuSection.appendChild(card);
+            });
+            lazyLoadImages();
+        }
+
+        // Initial render
+        renderMenuItems(menuItems);
+
+        // Search functionality
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredItems = menuItems.filter(item => 
+                item.name.toLowerCase().includes(searchTerm)
+            );
+            renderMenuItems(filteredItems);
+        });
+
+        // Mobile menu toggle
+        const btn = document.querySelector("button.mobile-menu-button");
+        const menu = document.querySelector(".mobile-menu");
+        btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+        });
+
+        // Cart functionality
+        function addToCart(id) {
+            const item = menuItems.find(item => item.id === id);
+            if (item) {
+                const existingItem = cart.find(cartItem => cartItem.id === id);
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({ ...item, quantity: 1 });
+                }
+                updateCart();
+            }
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const cartCount = document.getElementById('cartCount');
+            const mobileCartCount = document.getElementById('mobileCartCount');
+
+            cartItems.innerHTML = '';
+            let total = 0;
+            let count = 0;
+
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'flex justify-between items-center mb-2';
+                itemElement.innerHTML = `
+                    <span>${item.name} x${item.quantity}</span>
+                    <span>₹${item.price * item.quantity}</span>
+                `;
+                cartItems.appendChild(itemElement);
+                total += item.price * item.quantity;
+                count += item.quantity;
+            });
+
+            cartTotal.textContent = total;
+            cartCount.textContent = count;
+            mobileCartCount.textContent = count;
+        }
+
+        // Add to cart event listener
+        document.addEventListener('click', function(e) {
+            if(e.target && e.target.classList.contains('add-to-cart')) {
+                const id = parseInt(e.target.getAttribute('data-id'));
+                addToCart(id);
+                e.target.classList.add('glow');
+                gsap.to(e.target, {y: -10, duration: 0.2, yoyo: true, repeat: 1});
+                setTimeout(() => e.target.classList.remove('glow'), 500);
+            }
+        });
+
+        // Cart sidebar toggle
+        const cartBtn = document.getElementById('cartBtn');
+        const mobileCartBtn = document.getElementById('mobileCartBtn');
+        const cartSidebar = document.getElementById('cartSidebar');
+
+        function toggleCart() {
+            cartSidebar.classList.toggle('open');
+        }
+
+        cartBtn.addEventListener('click', toggleCart);
+        mobileCartBtn.addEventListener('click', toggleCart);
+
+        // Checkout process
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const checkoutModal = document.getElementById('checkoutModal');
+        const checkoutForm = document.getElementById('checkoutForm');
+
+        checkoutBtn.addEventListener('click', () => {
+            checkoutModal.classList.remove('hidden');
+        });
+
+        // User authentication
+        const loginBtn = document.getElementById('loginBtn');
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const loginForm = document.getElementById('loginForm');
+
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+        });
+
+        mobileLoginBtn.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            // Simulate API call
+            setTimeout(() => {
+                alert(`Logged in as ${email}`);
+                loginModal.classList.add('hidden');
+                loginBtn.textContent = 'Logout';
+                mobileLoginBtn.textContent = 'Logout';
+            }, 1000);
+        });
+
+        // Lazy loading images
+        function lazyLoadImages() {
+            const images = document.querySelectorAll('img.lazy');
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.getAttribute('data-src');
+                        img.classList.remove('lazy');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+
+            images.forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+
+        // Scroll animation
+        function animateOnScroll() {
+            const cards = document.querySelectorAll('#menu > div');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in-up');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        // Call animation function
+        animateOnScroll();
+
+        // Error handling
+        window.addEventListener('error', function(e) {
+            console.error('An error occurred:', e.error);
+            alert('Oops! Something went wrong. Please try again later.');
+        });
+
+        // Loading state
+        function showLoading() {
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
+            loadingOverlay.innerHTML = '<div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>';
+            document.body.appendChild(loadingOverlay);
+            return loadingOverlay;
+        }
+
+        function hideLoading(overlay) {
+            document.body.removeChild(overlay);
+        }
+
+        // UPI and Location functionality
+        function validateUpiId(upiId) {
+            const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z]{3,}$/;
+            return upiRegex.test(upiId);
+        }
+
+        function initAutocomplete() {
+            const input = document.getElementById('location');
+            const autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    window.alert("No details available for input: '" + place.name + "'");
+                    return;
+                }
+                // You can use place.geometry.location.lat() and place.geometry.location.lng() for the coordinates
+            });
+        }
+
+        // Modify the existing checkout form submission handler
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const loadingOverlay = showLoading();
+            const upiId = document.getElementById('upiId').value;
+            const location = document.getElementById('location').value;
+
+            if (!validateUpiId(upiId)) {
+                hideLoading(loadingOverlay);
+                alert('Please enter a valid UPI ID');
+                return;
+            }
+
+            if (!location) {
+                hideLoading(loadingOverlay);
+                alert('Please enter your location');
+                return;
+            }
+
+            // Simulate API call for payment and order placement
+            setTimeout(() => {
+                hideLoading(loadingOverlay);
+                alert(`Order placed successfully!\nPayment received from UPI ID: ${upiId}\nDelivery Location: ${location}`);
+                cart = [];
+                updateCart();
+                checkoutModal.classList.add('hidden');
+            }, 2000);
+        });
+
+        // Initialize Google Maps Autocomplete
+        initAutocomplete();
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === checkoutModal) {
+                checkoutModal.classList.add('hidden');
+            }
+            if (e.target === loginModal) {
+                loginModal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
